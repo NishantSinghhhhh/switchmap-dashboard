@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard.containerfile
+    container_name: switchmap-dashboard
+    user: "${API_UID}:${API_GID}"
+    volumes:
+      - .:/home/talawa/dashboard
+      - /home/talawa/dashboard/node_modules
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://server:7000/graphql
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3000:3000"
+    networks:
+      - switchmap-network
+    depends_on:
+      - server
+
+networks:
+  switchmap-network:
+    driver: bridge

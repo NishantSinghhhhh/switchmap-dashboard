@@ -1,0 +1,25 @@
+{
+    "name": "SwitchMap-NG Dashboard",
+    "dockerComposeFile": "../docker/compose.devcontainer.yaml",
+    "service": "dashboard",
+    "workspaceFolder": "/workspace",
+    "remoteUser": "node",
+    "extensions": [
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "oderwat.indent-rainbow",
+      "streetsidesoftware.code-spell-checker"
+    ],
+    "settings": {
+      "terminal.integrated.defaultProfile.linux": "bash",
+      "editor.formatOnSave": true,
+      "files.exclude": {
+        "**/node_modules": true,
+        "**/dist": true
+      }
+    },
+    "postCreateCommand": "pnpm install",
+    "forwardPorts": [3000],
+    "shutdownAction": "stopCompose"
+  }
+  
