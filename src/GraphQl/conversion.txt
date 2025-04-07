@@ -1,0 +1,88 @@
+@API.route("/devices/<int:idx_device>", methods=["GET"])
+def devices(idx_device):
+    """Get device data.
+
+    Args:
+        idx_device: IDX of the DB device table
+
+    Returns:
+        result: JSON of zone data
+
+    """
+    # Initialize key variables
+    config = ConfigDashboard()
+    query = """
+{
+  devices(filter: {idxDevice: {eq: IDX_DEVICE}}) {
+    edges {
+      node {
+        hostname
+        sysName
+        sysDescription
+        sysObjectid
+        sysUptime
+        lastPolled
+        device {
+          event {
+            tsCreated
+            roots {
+              edges {
+                node {
+                  idxRoot
+                }
+              }
+            }
+          }
+        }
+        l1interfaces {
+          edges {
+            node {
+              INTERFACE
+            }
+          }
+        }
+      }
+    }
+  }
+}
+""".replace(
+        "IDX_DEVICE", str(idx_device)
+    )
+
+    # Insert the interface snippet
+    updated_query = _insert_interface_snippet(query)
+
+    # Get the data
+    result = rest.get_graphql(updated_query, config)
+    normalized = graphene.normalize(result)
+
+    # Get the zone data list
+    data = normalized.get("data")
+    device = data.get("devices")[0]
+
+    # Return
+    return jsonify(device)
+
+
+// NEw graphql query in dashboard
+
+query GetDeviceDetails($deviceId: ID!) {
+  device(id: $deviceId) {
+    id
+    hostname
+    sysName
+    sysDescription
+    sysUptime
+    lastPolled
+    interfaces {
+      ifname
+      ifoperstatus
+      ifspeed
+      tsIdle
+    }
+    events {
+      tsCreated
+    }
+  }
+}
+
